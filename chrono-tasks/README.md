@@ -16,9 +16,10 @@ Una aplicación Angular para gestión de tareas con seguimiento de tiempo en tie
 - ✅ **Widget flotante de timer con botón de finalizar**
 - ✅ **Cálculo correcto de duraciones en tiempo real**
 
-## 🚀 **Funcionalidades Implementadas**
+## **Funcionalidades Implementadas**
 
 ### **Sistema de Cola de Peticiones**
+
 - **localStorage**: Las peticiones que fallan se guardan automáticamente en localStorage
 - **Reintentos automáticos**: Cada 30 segundos se reintentan las peticiones pendientes
 - **Límite de reintentos**: Máximo 3 intentos por petición
@@ -26,6 +27,7 @@ Una aplicación Angular para gestión de tareas con seguimiento de tiempo en tie
 - **SSR Compatible**: Funciona correctamente con Server-Side Rendering
 
 ### **Funcionalidad Completa de Timer**
+
 - ✅ **Iniciar timer**: Funciona correctamente
 - ✅ **Parar timer**: Implementado usando DELETE + POST (solución alternativa)
 - ✅ **Timer en tiempo real**: Actualización cada segundo
@@ -34,15 +36,17 @@ Una aplicación Angular para gestión de tareas con seguimiento de tiempo en tie
 - ✅ **Cálculo de duración**: Incluye tiempo transcurrido de timers activos
 
 ### **Editor de Tareas Mejorado**
+
 - ✅ **Añadir tiempos manuales**: Formulario para registrar tiempos pasados
 - ✅ **Eliminar tiempos**: Funciona correctamente
 - ✅ **Peticiones pendientes**: Se muestran en tiempo real
 - ✅ **Navegación corregida**: Cada tarea lleva a su ID correcto
 - ✅ **Tiempo total preciso**: Cálculo en tiempo real incluyendo timers activos
 
-## ⚠️ Limitaciones Actuales de la API Real
+## Limitaciones Actuales de la API Real
 
 ### ✅ **Funciona correctamente:**
+
 - Crear tareas (`POST /tasks`)
 - Obtener lista de tareas (`GET /tasks`, `GET /tasks?expanded=times`)
 - Crear timers (`POST /tasks/{id}/times`)
@@ -50,11 +54,13 @@ Una aplicación Angular para gestión de tareas con seguimiento de tiempo en tie
 - Eliminar tareas (`DELETE /tasks/{id}`)
 
 ### ❌ **No funciona (limitaciones del servidor):**
+
 - Obtener tarea individual (`GET /tasks/{id}` - Error 405)
 - Actualizar tiempos (`PUT /tasks/{id}/times/{timeId}` - Error 500)
 - Actualizar tareas (`PUT /tasks/{id}` - Error 500)
 
-### 🔧 **Soluciones implementadas:**
+### **Soluciones implementadas:**
+
 - **Tarea individual**: Filtrado en cliente desde todas las tareas
 - **Parar timers**: DELETE del tiempo activo + POST del tiempo completado
 - **Peticiones fallidas**: Se guardan en localStorage y se reintentan automáticamente
@@ -71,17 +77,20 @@ Una aplicación Angular para gestión de tareas con seguimiento de tiempo en tie
 ### Pasos de instalación
 
 1. **Clonar el repositorio**
+
    ```bash
    git clone <repository-url>
    cd chrono-tasks
    ```
 
 2. **Instalar dependencias**
+
    ```bash
    npm install
    ```
 
 3. **Iniciar la aplicación Angular**
+
    ```bash
    ng serve
    ```
@@ -92,9 +101,10 @@ Una aplicación Angular para gestión de tareas con seguimiento de tiempo en tie
 ## API Real
 
 La aplicación está configurada para usar la API real por defecto:
+
 - **URL**: `https://oficines.glamsw.com/chrono-test`
 - **Token**: Incluido automáticamente en todas las peticiones
-- **Endpoints funcionales**: 
+- **Endpoints funcionales**:
   - ✅ `GET /tasks` - Obtener todas las tareas
   - ✅ `GET /tasks?expanded=times` - Obtener tareas con tiempos expandidos
   - ✅ `POST /tasks` - Crear nueva tarea
@@ -138,6 +148,7 @@ src/
 ## Sistema de Cola de Peticiones
 
 ### **Cómo funciona:**
+
 1. **Detección de errores**: Cuando una petición falla, se guarda automáticamente en localStorage
 2. **Reintentos automáticos**: Cada 30 segundos se intentan ejecutar las peticiones pendientes
 3. **Límite de reintentos**: Máximo 3 intentos por petición
@@ -145,11 +156,13 @@ src/
 5. **SSR Compatible**: Usa `isPlatformBrowser` para evitar errores en el servidor
 
 ### **Tipos de peticiones que se guardan:**
+
 - Crear tiempos (`POST /tasks/{id}/times`)
 - Actualizar tiempos (`PUT /tasks/{id}/times/{timeId}`)
 - Eliminar tiempos (`DELETE /tasks/{id}/times/{timeId}`)
 
 ### **Ventajas:**
+
 - **Resistencia a fallos**: La aplicación funciona aunque la API esté caída
 - **Experiencia de usuario**: No se pierden datos por problemas de conexión
 - **Reintentos automáticos**: No requiere intervención manual
@@ -159,6 +172,7 @@ src/
 ## Funcionalidades
 
 ### Timer en Tiempo Real
+
 - ✅ Se pueden iniciar timers para cualquier tarea
 - ✅ Se pueden parar timers (solución alternativa implementada)
 - ✅ Solo puede haber un tiempo activo a la vez
@@ -169,6 +183,7 @@ src/
 - ✅ Cálculo correcto de duraciones incluyendo timers activos
 
 ### Gestión de Tareas
+
 - ✅ Crear, editar y eliminar tareas
 - ✅ Asignar cliente y descripción
 - ✅ Ver historial de tiempos por tarea
@@ -177,6 +192,7 @@ src/
 - ✅ Añadir tiempos manuales desde el editor
 
 ### Interfaz de Usuario
+
 - ✅ Diseño responsive con Bootstrap
 - ✅ Header fijo con información en tiempo real
 - ✅ Cards para mostrar tareas
@@ -215,6 +231,7 @@ ng build --configuration production
 ## Estado del Proyecto
 
 ✅ **COMPLETADO** - Aplicación funcional con:
+
 - API real conectada y funcionando (con limitaciones conocidas)
 - Timer en tiempo real (iniciar y parar)
 - Gestión completa de tareas
@@ -230,6 +247,7 @@ ng build --configuration production
 ## Cumplimiento de Requerimientos
 
 ### ✅ **Requerimientos Básicos CUMPLIDOS:**
+
 - ✅ Aplicación Angular que consume REST API
 - ✅ Task List: name, description, client, time spent
 - ✅ Task Form: name (required), client (required), description (optional)
@@ -237,6 +255,7 @@ ng build --configuration production
 - ✅ Bootstrap para estilos
 
 ### ✅ **Bonus CUMPLIDOS:**
+
 - ✅ Componente timer funcional
 - ✅ Iniciar tiempos desde task list
 - ✅ POST con end_date vacío para tiempos activos
@@ -261,6 +280,7 @@ ng build --configuration production
 ## Próximos Pasos
 
 Para completar la funcionalidad al 100%:
+
 1. Resolver problemas con endpoints PUT en la API real
 2. Implementar endpoint GET /tasks/{id} en la API real
 3. Añadir funcionalidad de edición de tareas
