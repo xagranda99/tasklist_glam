@@ -1,0 +1,22 @@
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">Chrono Tasks</span>
+    
+    <div class="d-flex align-items-center">
+      <div class="me-4">
+        <small class="text-light">Hora actual:</small>
+        <span class="text-light fw-bold">{{ currentTime$ | async | date:'HH:mm:ss' }}</span>
+      </div>
+      
+      <div *ngIf="activeTime$ | async as activeTime" class="me-4">
+        <small class="text-light">Tarea activa:</small>
+        <span class="text-warning fw-bold">{{ activeTime.task.name }}</span>
+        <span class="text-success fw-bold ms-2">{{ formatDuration(activeTime.elapsedSeconds) }}</span>
+      </div>
+      
+      <div *ngIf="!(activeTime$ | async)" class="text-muted">
+        <small>Sin tarea activa</small>
+      </div>
+    </div>
+  </div>
+</nav>

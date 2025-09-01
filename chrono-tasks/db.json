@@ -1,0 +1,48 @@
+{
+  "tasks": [
+    {
+      "id": "1",
+      "name": "Tarea 1",
+      "description": "Desarrollo de funcionalidad principal",
+      "customer": "Cliente A",
+      "times": [
+        {
+          "id": "t1",
+          "description": "Implementación inicial",
+          "begin_date": "2025-01-20T10:00:00Z",
+          "end_date": "2025-01-20T12:30:00Z",
+          "spent_time": 9000
+        },
+        {
+          "id": "t2",
+          "description": "Testing y debugging",
+          "begin_date": "2025-01-20T14:00:00Z",
+          "end_date": null,
+          "spent_time": 0
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Tarea 2",
+      "description": "Optimización de rendimiento",
+      "customer": "Cliente B",
+      "times": [
+        {
+          "id": "t3",
+          "description": "Análisis de código",
+          "begin_date": "2025-01-20T09:00:00Z",
+          "end_date": "2025-01-20T11:00:00Z",
+          "spent_time": 7200
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Tarea 3",
+      "description": "Documentación técnica",
+      "customer": "Cliente A",
+      "times": []
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Lista de Tareas</h2>
+        <a routerLink="/tasks/new" class="btn btn-primary">
+          <i class="bi bi-plus-circle"></i> Nueva Tarea
+        </a>
+      </div>
+
+      <div class="row" *ngIf="tasks$ | async as tasks">
+        <div class="col-md-6 col-lg-4 mb-4" *ngFor="let task of tasks">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">{{ task.name }}</h5>
+              <p class="card-text">{{ task.description }}</p>
+              <p class="card-text">
+                <small class="text-muted">
+                  <strong>Cliente:</strong> {{ task.customer }}
+                </small>
+              </p>
+              <p class="card-text">
+                <small class="text-muted">
+                  <strong>Tiempo total:</strong> {{ formatDuration(getTotalSpentTime(task.times || [])) }}
+                </small>
+              </p>
+            </div>
+            <div class="card-footer">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <button 
+                    *ngIf="!hasActiveTime(task)"
+                    class="btn btn-success btn-sm me-2"
+                    (click)="startTimer(task)">
+                    <i class="bi bi-play-fill"></i> Iniciar
+                  </button>
+                  <button 
+                    *ngIf="hasActiveTime(task)"
+                    class="btn btn-danger btn-sm me-2"
+                    (click)="stopActiveTime(task)">
+                    <i class="bi bi-stop-fill"></i> Parar
+                  </button>
+                </div>
+                <div>
+                  <a [routerLink]="['/tasks', task.id]" class="btn btn-outline-primary btn-sm me-2">
+                    <i class="bi bi-pencil"></i>
+                  </a>
+                  <button 
+                    class="btn btn-outline-danger btn-sm"
+                    (click)="deleteTask(task.id)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="(tasks$ | async)?.length === 0" class="text-center py-5">
+        <h4 class="text-muted">No hay tareas disponibles</h4>
+        <p class="text-muted">Crea tu primera tarea para comenzar a trabajar</p>
+        <a routerLink="/tasks/new" class="btn btn-primary">Crear Tarea</a>
+      </div>
+    </div>
+  </div>
+</div>

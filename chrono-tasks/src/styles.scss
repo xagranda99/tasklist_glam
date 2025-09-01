@@ -1,0 +1,14 @@
+/* You can add global styles to this file, and also import other style files */
+@use 'bootstrap/scss/bootstrap';
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.timer-widget {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 1000;
+  min-width: 200px;
+}

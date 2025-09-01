@@ -1,0 +1,9 @@
+<div class="timer-widget" *ngIf="activeTime$ | async as activeTime">
+  <div class="card">
+    <div class="card-body text-center">
+      <h6 class="card-title">{{ activeTime.task.name }}</h6>
+      <div class="display-4 text-primary">{{ formatDuration(activeTime.elapsedSeconds) }}</div>
+      <small class="text-muted">{{ activeTime.task.customer }}</small>
+    </div>
+  </div>
+</div>

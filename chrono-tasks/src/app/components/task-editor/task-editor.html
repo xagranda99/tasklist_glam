@@ -1,0 +1,84 @@
+<div class="container mt-4" *ngIf="task">
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{ task.name }}</h2>
+        <button class="btn btn-outline-secondary" (click)="goBack()">
+          <i class="bi bi-arrow-left"></i> Volver
+        </button>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">Información de la Tarea</h5>
+          <p><strong>Cliente:</strong> {{ task.customer }}</p>
+          <p><strong>Descripción:</strong> {{ task.description || 'Sin descripción' }}</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Registros de Tiempo</h5>
+          <button 
+            *ngIf="!hasActiveTime()"
+            class="btn btn-success"
+            (click)="startTimer()">
+            <i class="bi bi-play-fill"></i> Iniciar Timer
+          </button>
+          <button 
+            *ngIf="hasActiveTime()"
+            class="btn btn-danger"
+            (click)="stopActiveTime()">
+            <i class="bi bi-stop-fill"></i> Parar Timer
+          </button>
+        </div>
+        <div class="card-body">
+          <div *ngIf="task.times && task.times.length > 0; else noTimes">
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th>Duración</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let time of task.times">
+                    <td>{{ formatDate(time.begin_date) }}</td>
+                    <td>{{ time.end_date ? formatDate(time.end_date) : '-' }}</td>
+                    <td>{{ formatDuration(time.spent_time) }}</td>
+                    <td>{{ time.description || '-' }}</td>
+                    <td>
+                      <span *ngIf="isTimeActive(time)" class="badge bg-success">Activo</span>
+                      <span *ngIf="!isTimeActive(time)" class="badge bg-secondary">Completado</span>
+                    </td>
+                    <td>
+                      <button 
+                        *ngIf="!isTimeActive(time)"
+                        class="btn btn-outline-danger btn-sm"
+                        (click)="deleteTime(time.id)">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <ng-template #noTimes>
+            <div class="text-center py-4">
+              <p class="text-muted">No hay registros de tiempo para esta tarea</p>
+              <button class="btn btn-primary" (click)="startTimer()">
+                <i class="bi bi-play-fill"></i> Iniciar Primer Timer
+              </button>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
