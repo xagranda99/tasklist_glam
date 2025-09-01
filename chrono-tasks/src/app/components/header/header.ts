@@ -37,10 +37,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  formatDuration(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  formatDuration(hours: number): string {
+    const totalHours = Math.floor(hours);
+    const minutes = Math.floor((hours - totalHours) * 60);
+    const seconds = Math.floor(((hours - totalHours) * 60 - minutes) * 60);
+    return `${totalHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 }

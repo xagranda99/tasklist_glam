@@ -11,7 +11,7 @@
       <div *ngIf="activeTime$ | async as activeTime" class="me-4">
         <small class="text-light">Tarea activa:</small>
         <span class="text-warning fw-bold">{{ activeTime.task.name }}</span>
-        <span class="text-success fw-bold ms-2">{{ formatDuration(activeTime.elapsedSeconds) }}</span>
+        <span class="text-success fw-bold ms-2">{{ formatDuration(activeTime.elapsedHours) }}</span>
       </div>
       
       <div *ngIf="!(activeTime$ | async)" class="text-muted">

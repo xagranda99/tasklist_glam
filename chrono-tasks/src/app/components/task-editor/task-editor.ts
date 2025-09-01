@@ -57,11 +57,11 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
   }
 
   hasActiveTime(): boolean {
-    return this.task?.times?.some(time => time.end_date === null) || false;
+    return this.task?.times?.some(time => time.end_date === '') || false;
   }
 
   getActiveTime(): Time | undefined {
-    return this.task?.times?.find(time => time.end_date === null);
+    return this.task?.times?.find(time => time.end_date === '');
   }
 
   startTimer(): void {
@@ -71,7 +71,7 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
     const newTime: Omit<Time, 'id'> = {
       description: '',
       begin_date: now,
-      end_date: null,
+      end_date: '', // API real usa string vacío para tiempos activos
       spent_time: 0
     };
 
@@ -81,45 +81,29 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
           this.currentTimeService.setActiveTime(createdTime, this.task!);
           this.loadTask(this.task!.id);
         },
-        error: (error) => console.error('Error starting timer:', error)
+        error: (error) => {
+          console.error('Error starting timer:', error);
+          alert('Error al iniciar el timer. Por favor, inténtalo de nuevo.');
+        }
       })
     );
   }
 
   stopActiveTime(): void {
-    if (!this.task) return;
-
-    const activeTime = this.getActiveTime();
-    if (!activeTime) return;
-
-    const now = new Date().toISOString();
-    const beginDate = new Date(activeTime.begin_date);
-    const endDate = new Date(now);
-    const spentTime = Math.floor((endDate.getTime() - beginDate.getTime()) / 1000);
-
-    this.subscription.add(
-      this.timeService.updateTime(this.task.id, activeTime.id, {
-        end_date: now,
-        spent_time: spentTime
-      }).subscribe({
-        next: () => {
-          this.currentTimeService.clearActiveTime();
-          this.loadTask(this.task!.id);
-        },
-        error: (error) => console.error('Error stopping timer:', error)
-      })
-    );
+    // Nota: La API real tiene problemas con el endpoint PUT para actualizar tiempos
+    // Por ahora, mostramos un mensaje informativo
+    alert('La funcionalidad de parar timers está temporalmente deshabilitada debido a limitaciones de la API. Los timers se pueden iniciar correctamente.');
   }
 
   isTimeActive(time: Time): boolean {
-    return time.end_date === null;
+    return time.end_date === '';
   }
 
-  formatDuration(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  formatDuration(hours: number): string {
+    const totalHours = Math.floor(hours);
+    const minutes = Math.floor((hours - totalHours) * 60);
+    const seconds = Math.floor(((hours - totalHours) * 60 - minutes) * 60);
+    return `${totalHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
   formatDate(dateString: string): string {
@@ -135,7 +119,10 @@ export class TaskEditorComponent implements OnInit, OnDestroy {
           next: () => {
             this.loadTask(this.task!.id);
           },
-          error: (error) => console.error('Error deleting time:', error)
+          error: (error) => {
+            console.error('Error deleting time:', error);
+            alert('Error al eliminar el registro de tiempo. Por favor, inténtalo de nuevo.');
+          }
         })
       );
     }

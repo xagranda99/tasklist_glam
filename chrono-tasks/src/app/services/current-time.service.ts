@@ -6,7 +6,7 @@ import { Task } from '../models/task.model';
 export interface ActiveTime {
   time: Time;
   task: Task;
-  elapsedSeconds: number;
+  elapsedHours: number; // Cambiado de elapsedSeconds a elapsedHours
 }
 
 @Injectable({
@@ -23,11 +23,11 @@ export class CurrentTimeService {
       if (activeTime) {
         const now = new Date();
         const beginDate = new Date(activeTime.time.begin_date);
-        const elapsedSeconds = Math.floor((now.getTime() - beginDate.getTime()) / 1000);
+        const elapsedHours = (now.getTime() - beginDate.getTime()) / (1000 * 60 * 60); // Convert to hours
         
         return {
           ...activeTime,
-          elapsedSeconds
+          elapsedHours
         };
       }
       return null;
@@ -40,7 +40,7 @@ export class CurrentTimeService {
     const activeTime: ActiveTime = {
       time,
       task,
-      elapsedSeconds: 0
+      elapsedHours: 0
     };
     this.activeTimeSubject.next(activeTime);
   }
