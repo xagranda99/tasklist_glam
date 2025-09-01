@@ -20,17 +20,14 @@ export class TaskService {
   }
 
   getTask(id: string): Observable<Task> {
-    // La API real no soporta GET /tasks/{id}, usamos filtro por ID
-    return this.apiService.get<Task[]>(`/tasks?id=${id}`).pipe(
+    // La API real no soporta filtrado por ID, obtenemos todas las tareas y filtramos
+    return this.getTasks(true).pipe(
       map(tasks => {
-        if (tasks.length === 0) {
+        const task = tasks.find(t => t.id === id);
+        if (!task) {
           throw new Error(`Task with id ${id} not found`);
         }
-        const task = tasks[0];
-        return {
-          ...task,
-          times: task.times || [] // Asegurar que times siempre sea un array
-        };
+        return task;
       })
     );
   }

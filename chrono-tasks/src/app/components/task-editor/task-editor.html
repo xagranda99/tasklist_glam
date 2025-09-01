@@ -8,31 +8,110 @@
         </button>
       </div>
 
+      <!-- Peticiones pendientes -->
+      <div *ngIf="pendingRequests.length > 0" class="alert alert-warning mb-4">
+        <h6><i class="bi bi-clock-history"></i> Peticiones Pendientes</h6>
+        <p class="mb-2">Hay {{ pendingRequests.length }} petición(es) esperando a que la API esté disponible:</p>
+        <ul class="mb-0">
+          <li *ngFor="let req of pendingRequests">
+            {{ req.type === 'create' ? 'Crear tiempo' : req.type === 'update' ? 'Actualizar tiempo' : 'Eliminar tiempo' }}
+            (Reintentos: {{ req.retryCount }}/3)
+          </li>
+        </ul>
+      </div>
+
       <div class="card mb-4">
         <div class="card-body">
           <h5 class="card-title">Información de la Tarea</h5>
           <p><strong>Cliente:</strong> {{ task.customer }}</p>
           <p><strong>Descripción:</strong> {{ task.description || 'Sin descripción' }}</p>
+          <p><strong>Tiempo Total:</strong> 
+            <span [class.text-success]="hasActiveTime() && (activeTime$ | async)?.task?.id === task.id">
+              {{ formatDuration(getTotalSpentTime()) }}
+            </span>
+            <span *ngIf="hasActiveTime() && (activeTime$ | async)?.task?.id === task.id" class="badge bg-success ms-1">
+              Activo
+            </span>
+          </p>
         </div>
       </div>
 
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h5 class="mb-0">Registros de Tiempo</h5>
-          <button 
-            *ngIf="!hasActiveTime()"
-            class="btn btn-success"
-            (click)="startTimer()">
-            <i class="bi bi-play-fill"></i> Iniciar Timer
-          </button>
-          <button 
-            *ngIf="hasActiveTime()"
-            class="btn btn-danger"
-            (click)="stopActiveTime()">
-            <i class="bi bi-stop-fill"></i> Parar Timer
-          </button>
+          <div>
+            <button 
+              *ngIf="!hasActiveTime()"
+              class="btn btn-success me-2"
+              (click)="startTimer()">
+              <i class="bi bi-play-fill"></i> Iniciar Timer
+            </button>
+            <button 
+              *ngIf="hasActiveTime()"
+              class="btn btn-danger me-2"
+              (click)="stopActiveTime()">
+              <i class="bi bi-stop-fill"></i> Parar Timer
+            </button>
+            <button 
+              class="btn btn-primary"
+              (click)="showAddTimeForm = !showAddTimeForm">
+              <i class="bi bi-plus-circle"></i> Añadir Tiempo
+            </button>
+          </div>
         </div>
         <div class="card-body">
+          <!-- Formulario para añadir tiempo manual -->
+          <div *ngIf="showAddTimeForm" class="mb-4">
+            <div class="card">
+              <div class="card-header">
+                <h6 class="mb-0">Añadir Registro de Tiempo</h6>
+              </div>
+              <div class="card-body">
+                <form (ngSubmit)="addTime()" #timeForm="ngForm">
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="description" class="form-label">Descripción</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="description"
+                        name="description"
+                        [(ngModel)]="newTime.description"
+                        placeholder="Descripción del trabajo realizado">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      <label for="beginDate" class="form-label">Fecha Inicio</label>
+                      <input
+                        type="datetime-local"
+                        class="form-control"
+                        id="beginDate"
+                        name="beginDate"
+                        [(ngModel)]="newTime.begin_date"
+                        required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                      <label for="endDate" class="form-label">Fecha Fin</label>
+                      <input
+                        type="datetime-local"
+                        class="form-control"
+                        id="endDate"
+                        name="endDate"
+                        [(ngModel)]="newTime.end_date">
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary" (click)="cancelAddTime()">
+                      Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                      Añadir Tiempo
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
           <div *ngIf="task.times && task.times.length > 0; else noTimes">
             <div class="table-responsive">
               <table class="table table-striped">
@@ -50,7 +129,15 @@
                   <tr *ngFor="let time of task.times">
                     <td>{{ formatDate(time.begin_date) }}</td>
                     <td>{{ time.end_date ? formatDate(time.end_date) : '-' }}</td>
-                    <td>{{ formatDuration(time.spent_time) }}</td>
+                    <td>
+                      <span *ngIf="isTimeActive(time) && (activeTime$ | async)?.task?.id === task.id && (activeTime$ | async)?.time?.id === time.id">
+                        {{ formatDuration((activeTime$ | async)?.elapsedHours || 0) }}
+                        <span class="badge bg-success ms-1">Activo</span>
+                      </span>
+                      <span *ngIf="!isTimeActive(time) || (activeTime$ | async)?.task?.id !== task.id || (activeTime$ | async)?.time?.id !== time.id">
+                        {{ formatDuration(time.spent_time || 0) }}
+                      </span>
+                    </td>
                     <td>{{ time.description || '-' }}</td>
                     <td>
                       <span *ngIf="isTimeActive(time)" class="badge bg-success">Activo</span>
@@ -72,8 +159,11 @@
           <ng-template #noTimes>
             <div class="text-center py-4">
               <p class="text-muted">No hay registros de tiempo para esta tarea</p>
-              <button class="btn btn-primary" (click)="startTimer()">
+              <button class="btn btn-primary me-2" (click)="startTimer()">
                 <i class="bi bi-play-fill"></i> Iniciar Primer Timer
+              </button>
+              <button class="btn btn-outline-primary" (click)="showAddTimeForm = true">
+                <i class="bi bi-plus-circle"></i> Añadir Tiempo Manual
               </button>
             </div>
           </ng-template>
