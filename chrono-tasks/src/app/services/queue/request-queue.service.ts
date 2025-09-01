@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable, interval } from 'rxjs';
 import { PendingRequest, PendingTimeRequest } from './pending-request.model';
 
@@ -13,12 +14,18 @@ export class RequestQueueService {
   private pendingRequestsSubject = new BehaviorSubject<PendingRequest[]>([]);
   public pendingRequests$ = this.pendingRequestsSubject.asObservable();
 
-  constructor() {
-    this.loadPendingRequests();
-    this.startRetryProcess();
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadPendingRequests();
+      this.startRetryProcess();
+    }
   }
 
   private loadPendingRequests(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     try {
       const stored = localStorage.getItem(this.STORAGE_KEY);
       if (stored) {
@@ -31,11 +38,17 @@ export class RequestQueueService {
   }
 
   private savePendingRequests(requests: PendingRequest[]): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      this.pendingRequestsSubject.next(requests);
+      return;
+    }
+
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(requests));
       this.pendingRequestsSubject.next(requests);
     } catch (error) {
       console.error('Error saving pending requests:', error);
+      this.pendingRequestsSubject.next(requests);
     }
   }
 
@@ -71,6 +84,10 @@ export class RequestQueueService {
   }
 
   private startRetryProcess(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     // Reintentar peticiones cada 30 segundos
     interval(this.RETRY_DELAY).subscribe(() => {
       this.retryPendingRequests();
